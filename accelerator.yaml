@@ -1,0 +1,49 @@
+accelerator:
+  displayName: tanzu-go-helloworld
+  description: This accelerator provides a web service that responds with the phrase, "Hello, World!"
+  iconUrl: https://billglover.me/img/bill.dev.png
+  tags:
+  - go
+  - helloworld
+  - http
+  options:
+  - name: greetingText
+    inputType: text
+    label: The text greeting displayed by the web service
+    defaultValue: Hello, World!
+  - name: goModule
+    inputType: text
+    label: Go module
+    defaultValue: "tanzu-go-helloworld"
+    required: true
+  - name: goVersion
+    inputType: select
+    label: Go version
+    choices:
+    - value: "1.20"
+      text: "1.20"
+    - value: "1.19"
+      text: "1.19"
+    - value: "1.18"
+      text: "1.18"
+    defaultValue: "1.20"
+    required: true
+engine:
+  merge:
+  - include: ["go.mod"]
+    chain:
+    - type: ReplaceText
+      regex:
+        pattern: '1\.20'
+        with: "#goVersion"
+    - type: ReplaceText
+      regex:
+        pattern: 'tanzu-go-helloworld'
+        with: "#goModule"
+  - include: [ "README.md" ]
+    chain:
+    - type: ReplaceText
+      substitutions:
+      - text: "{{GREETING_TEXT}}"
+        with: "#greetingText"
+  - include: ["*.go"]
